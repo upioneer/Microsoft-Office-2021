@@ -7,11 +7,25 @@ References:
 #>
 $folder = 'C:\OfficeProPlus2021'
 
+$fwdomain = Get-NetFirewallProfile -Profile domain
+$fwprivate = Get-NetFirewallProfile -Profile private
+$fwpublic = Get-NetFirewallProfile -Profile public
+
+Set-NetFirewallProfile -Profile domain -Enabled False
+Set-NetFirewallProfile -Profile private -Enabled False
+Set-NetFirewallProfile -Profile public -Enabled False
+
 $regkeys = @(
+    'HKCU:\Software\Microsoft\Office\11.0',
+    'HKCU:\Software\Microsoft\Office\12.0',
+    'HKCU:\Software\Microsoft\Office\14.0',
     'HKCU:\Software\Microsoft\Office\15.0',
     'HKCU:\Software\Microsoft\Office\16.0',
     'HKCU:\Software\Microsoft\Office\Common',
     'HKCU:\Software\Microsoft\Office\Software',
+    'HKLM:\Software\Microsoft\Office\11.0',
+    'HKLM:\Software\Microsoft\Office\12.0',
+    'HKLM:\Software\Microsoft\Office\14.0',
     'HKLM:\Software\Microsoft\Office\15.0',
     'HKLM:\Software\Microsoft\Office\16.0',
     'HKLM:\Software\Microsoft\Office\Common',
@@ -20,7 +34,7 @@ $regkeys = @(
 
 foreach ($regkey in $regkeys) {
     if (Test-Path $regkey) {
-        Remove-Item $regkey -Force -Verbose
+        Remove-Item $regkey -Force -Verbose -Recurse
     }
 }
 
@@ -38,3 +52,7 @@ Invoke-WebRequest -uri 'https://github.com/upioneer/Microsoft-Office-2021/blob/m
 
 $arguments = "/configure $folder\configuration.xml"
 Start-Process "$folder\setup.exe" -ArgumentList $arguments -Wait
+
+Set-NetFirewallProfile -Profile domain -Enabled $fwdomain.Enabled
+Set-NetFirewallProfile -Profile private -Enabled $fwprivate.Enabled
+Set-NetFirewallProfile -Profile public -Enabled $fwpublic.Enabled
