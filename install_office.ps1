@@ -101,7 +101,7 @@ $xml | Out-File $folder\configuration.xml -Force
 
 # install office pro plus
 $arguments = "/configure $folder\configuration.xml"
-Start-Process "$folder\setup.exe" -ArgumentList $arguments -Wait
+Start-Process "$folder\setup.exe" -ArgumentList $arguments -Wait -WindowStyle Minimized
 
 # restore firewall state for domain, private and public profiles
 Set-NetFirewallProfile -Profile domain -Enabled $fwdomain.Enabled
